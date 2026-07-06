@@ -1,4 +1,4 @@
-// Импортируем именно из пакета мини-версии
+
 import * as z from "zod/mini"; 
 
 export const authValidation = z.strictObject({
