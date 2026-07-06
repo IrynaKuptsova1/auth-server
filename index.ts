@@ -9,7 +9,9 @@ import { RefreshToken, User } from "./types.js";
 import { generateAccessToken } from "./utils.js";
 import { MongoClient, Db } from "mongodb";
 
-if (!process.env.JWT_SECRET || !process.env.MONGODB_URI) {
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET || !process.env.MONGODB_URI) {
   throw Error(
     "ALARM! APP CANNOT WORK WITHOUT IMPORTANT ENVIRONMENT VARIABLE JWT_SECRET",
   );
@@ -20,7 +22,7 @@ let client: MongoClient;
 let db: Db;
 
 try {
-  client = new MongoClient(process.env.MONGODB_URI!);
+  client = new MongoClient(process.env.MONGODB_URI);
   await client.connect();
   db = client.db();
   console.log("MongoDB connected");
@@ -127,8 +129,11 @@ app.post("/login", async (c) => {
 
 app.post("/refresh", async (c) => {
   try {
-    const auth = c.req.header("Authorization");
-    const clientRefreshToken = auth?.split(" ")[1];
+    const authHeader = c.req.header("Authorization");
+    if (!authHeader) {
+      return c.json({ error: "Unathorized" }, 401);
+    }
+    const clientRefreshToken = authHeader.split(" ")[1];
 
     if (!clientRefreshToken) {
       return c.json({ error: "Refresh token required" }, 401);
@@ -165,7 +170,8 @@ app.get("/me", async (c) => {
     if (!token) {
       return c.json({ error: "Unauthorized" }, 401);
     }
-    const payload = await verify(token, process.env.JWT_SECRET!, "HS256");
+
+    const payload = await verify(token, JWT_SECRET, "HS256");
 
     return c.json({
       data: {
@@ -187,6 +193,6 @@ serve(
   },
 );
 
-//export default {
-//  fetch: app.fetch
-//}
+export default {
+  fetch: app.fetch,
+};
