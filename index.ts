@@ -1,13 +1,13 @@
 import { Hono } from "hono";
-
-import { serve } from "@hono/node-server"; // только для локального запуска
+import { MongoClient, Db } from "mongodb";
+import { serve } from "@hono/node-server"; // for local server hosting
+import { cors } from "hono/cors";
 import { decode, sign, verify } from "hono/jwt";
 import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcrypt";
-import { cors } from "hono/cors";
 import { RefreshToken, User } from "./types.js";
 import { generateAccessToken } from "./utils.js";
-import { MongoClient, Db } from "mongodb";
+import { authValidation } from "./validation.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -35,14 +35,18 @@ app.use("*", cors());
 
 app.post("/sign_up", async (c) => {
   try {
-    const { email, password } = await c.req.json();
-
-    if (!email || !password) {
+    const body = await c.req.json();
+    const result = authValidation.safeParse(body);
+    if (!result.success) {
       return c.json(
-        { error: "Validation failed: email or password empty" },
-        400,
+        { 
+          error: "Validation failed", 
+          ddetails: result.error.issues
+        }, 
+        400
       );
     }
+    const { email, password } = result.data;
 
     const users = db.collection<User>("users");
     const existingUser = await users.findOne({ email });
@@ -51,7 +55,7 @@ app.post("/sign_up", async (c) => {
     }
     const userId = uuidv4();
 
-    const hashPassword = await bcrypt.hash(password, 2);
+    const hashPassword = await bcrypt.hash(password, 4);
 
     await users.insertOne({
       id: userId,
@@ -82,11 +86,19 @@ app.post("/sign_up", async (c) => {
 
 app.post("/login", async (c) => {
   try {
-    const { email, password } = await c.req.json();
+    const body = await c.req.json();
+    const result = authValidation.safeParse(body);
 
-    if (!email || !password) {
-      return c.json({ error: "Email or password cannot be empty" }, 400);
+    if (!result.success) {
+      return c.json(
+        { 
+          error: "Validation failed", 
+          details: result.error.issues
+        }, 
+        400
+      );
     }
+    const { email, password } = await c.req.json();
 
     const users = db.collection<User>("users");
     const refreshTokens = db.collection<RefreshToken>("refresh_tokens");
