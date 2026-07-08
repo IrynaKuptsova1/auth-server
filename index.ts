@@ -186,9 +186,10 @@ app.get("/me", async (c) => {
     const payload = await verify(token, JWT_SECRET, "HS256");
 
     return c.json({
-      data: {
-        username: payload.username,
-      },
+    data: {
+    id: payload.id,
+    email: payload.email,
+    },
     });
   } catch (error) {
     return c.json({ error: "Unauthorized" }, 401);
