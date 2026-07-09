@@ -1,3 +1,8 @@
+export type Bindings = {
+  JWT_SECRET: string;
+  MONGODB_URI: string;
+};
+
 export type User = {
     id: string
     email: string

@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { MongoClient, Db } from "mongodb";
-import { serve } from "@hono/node-server"; // for local server hosting
+//import { serve } from "@hono/node-server"; // for local server hosting
 import { cors } from "hono/cors";
 import { decode, sign, verify } from "hono/jwt";
 import { v4 as uuidv4 } from "uuid";
@@ -200,15 +200,15 @@ app.get("/me", async (c) => {
   }
 });
 
-serve(
-  {
-    fetch: app.fetch,
-    port: 3000,
-  },
-  (info) => {
-    console.log(`Working on http://localhost:${info.port}`);
-  },
-);
+//serve(
+//  {
+//    fetch: app.fetch,
+//    port: 3000,
+//  },
+//  (info) => {
+//    console.log(`Working on http://localhost:${info.port}`);
+//  },
+//);
 
 export default {
   fetch: app.fetch,
