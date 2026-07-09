@@ -33,17 +33,21 @@ try {
 
 app.use("*", cors());
 
+// app.get("/health", (c) => {
+//   return c.json(200);
+// });
+
 app.post("/sign_up", async (c) => {
   try {
     const body = await c.req.json();
     const result = authValidation.safeParse(body);
     if (!result.success) {
       return c.json(
-        { 
-          error: "Validation failed", 
-          ddetails: result.error.issues
-        }, 
-        400
+        {
+          error: "Validation failed",
+          ddetails: result.error.issues,
+        },
+        400,
       );
     }
     const { email, password } = result.data;
@@ -84,18 +88,18 @@ app.post("/sign_up", async (c) => {
   }
 });
 
-app.post("/login", async (c) => {
+app.post("/sign_in", async (c) => {
   try {
     const body = await c.req.json();
     const result = authValidation.safeParse(body);
 
     if (!result.success) {
       return c.json(
-        { 
-          error: "Validation failed", 
-          details: result.error.issues
-        }, 
-        400
+        {
+          error: "Validation failed",
+          details: result.error.issues,
+        },
+        400,
       );
     }
     const { email, password } = await c.req.json();
@@ -186,10 +190,10 @@ app.get("/me", async (c) => {
     const payload = await verify(token, JWT_SECRET, "HS256");
 
     return c.json({
-    data: {
-    id: payload.id,
-    email: payload.email,
-    },
+      data: {
+        id: payload.id,
+        email: payload.email,
+      },
     });
   } catch (error) {
     return c.json({ error: "Unauthorized" }, 401);
