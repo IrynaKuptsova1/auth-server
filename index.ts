@@ -146,6 +146,7 @@ app.post("/sign_in", async (c) => {
 app.post("/refresh", async (c) => {
   try {
     const authHeader = c.req.header("Authorization");
+
     if (!authHeader) {
       return c.json({ error: "Unathorized" }, 401);
     }
@@ -181,7 +182,11 @@ app.post("/refresh", async (c) => {
 app.get("/me", async (c) => {
   try {
     const auth = c.req.header("Authorization");
-    const token = auth?.split(" ")[1];
+    console.log(auth);
+
+    const token = auth?.split(".")[1];
+    console.log("token", token);
+    
 
     if (!token) {
       return c.json({ error: "Unauthorized" }, 401);
