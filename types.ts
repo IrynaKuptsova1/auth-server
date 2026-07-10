@@ -14,3 +14,7 @@ export type RefreshToken = {
     token: string
     created_at: Date
 }
+export type TokenPair = {
+    accessToken: string;
+    refreshToken: string;
+}

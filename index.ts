@@ -66,7 +66,7 @@ app.post("/sign_up", async (c) => {
       email: email,
       password_hash: hashPassword,
     });
-    const accessToken = await generateAccessToken(userId, email);
+    const accessToken = await generateAccessToken(userId, email, JWT_SECRET);
     const refreshToken = uuidv4();
     const refreshTokens = db.collection<RefreshToken>("refresh_tokens");
     await refreshTokens.insertOne({
@@ -116,7 +116,11 @@ app.post("/sign_in", async (c) => {
       return c.json({ error: "Invalid email or password" }, 401);
     }
 
-    const accessToken = await generateAccessToken(user.id, user.email);
+    const accessToken = await generateAccessToken(
+      user.id,
+      user.email,
+      JWT_SECRET,
+    );
     const currentRefreshToken = uuidv4();
     await refreshTokens.updateOne(
       { user_id: user.id },
@@ -142,17 +146,12 @@ app.post("/sign_in", async (c) => {
     return c.json({ error: "Error" }, 500);
   }
 });
-
 app.post("/refresh", async (c) => {
   try {
-    const authHeader = c.req.header("Authorization");
+    const body = await c.req.json();
+    const clientRefreshToken = body.refreshToken;
 
-    if (!authHeader) {
-      return c.json({ error: "Unathorized" }, 401);
-    }
-    const clientRefreshToken = authHeader.split(" ")[1];
-
-    if (!clientRefreshToken) {
+    if (!clientRefreshToken || typeof clientRefreshToken !== "string" || !clientRefreshToken.trim()) {
       return c.json({ error: "Refresh token required" }, 401);
     }
 
@@ -169,10 +168,26 @@ app.post("/refresh", async (c) => {
       return c.json({ error: "User not found" }, 401);
     }
 
-    const newAccessToken = await generateAccessToken(user.id, user.email);
+    const newAccessToken = await generateAccessToken(
+      user.id,
+      user.email,
+      JWT_SECRET,
+    );
+
+    const newRefreshToken = uuidv4();
+    await refreshTokens.updateOne(
+      { user_id: user.id },
+      {
+        $set: {
+          token: newRefreshToken,
+          created_at: new Date(),
+        },
+      }
+    );
 
     return c.json({
       accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
     });
   } catch (error) {
     return c.json({ error: "Error" }, 400);
@@ -182,26 +197,20 @@ app.post("/refresh", async (c) => {
 app.get("/me", async (c) => {
   try {
     const auth = c.req.header("Authorization");
-    console.log(auth);
+    const token = auth?.split(" ")[1];
 
-    const token = auth?.split(".")[1];
-    console.log("token", token);
-    
-
-    if (!token) {
+    if (!token || typeof token !== "string" || !token.trim()) {
       return c.json({ error: "Unauthorized" }, 401);
     }
 
     const payload = await verify(token, JWT_SECRET, "HS256");
 
     return c.json({
-      data: {
-        id: payload.id,
-        email: payload.email,
-      },
+      id: payload.id,
+      email: payload.email,
     });
   } catch (error) {
-    return c.json({ error: "Unauthorized" }, 401);
+    return c.json({ error: "Token expired or invalid" }, 401);
   }
 });
 
