@@ -37,7 +37,7 @@ app.use("*", cors());
 //   return c.json(200);
 // });
 
-app.post("/sign_up", async (c) => {
+app.post("/sign-up", async (c) => {
   try {
     const body = await c.req.json();
     const result = authValidation.safeParse(body);
@@ -88,7 +88,7 @@ app.post("/sign_up", async (c) => {
   }
 });
 
-app.post("/sign_in", async (c) => {
+app.post("/sign-in", async (c) => {
   try {
     const body = await c.req.json();
     const result = authValidation.safeParse(body);
