@@ -11,7 +11,7 @@ npm run dev:bun
 This project was built to master full-cycle JWT authentication server. Key learnings include working with the native MongoDB driver, schema validation using Zod, and secure password hashing with bcrypt in Hono.
 
 
-Deploy link: https://auth-server-ntfy.onrender.com
+Deployed server link for fetches: https://auth-server-ntfy.onrender.com
 
 
 Endpoints
@@ -27,6 +27,9 @@ Endpoints
 
 `GET /me` — Header: `Authorization: Bearer <token>` `{id, email}`
 
+Example Fetch:
 ```
-curl -X POST https://auth-server-ntfy.onrender.com/sign-up -H "Content-Type: application/json" -d '{"email":"test@example.com","password":"123Aa!"}'
+curl -X POST https://auth-server-ntfy.onrender.com/sign-up
+-H "Content-Type: application/json"
+-d '{"email":"test@example.com","password":"123Aa!"}'
 ```
