@@ -102,7 +102,7 @@ app.post("/sign-in", async (c) => {
         400,
       );
     }
-    const { email, password } = await c.req.json();
+    const { email, password } = result.data;
 
     const users = db.collection<User>("users");
     const refreshTokens = db.collection<RefreshToken>("refresh_tokens");
