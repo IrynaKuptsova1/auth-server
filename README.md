@@ -16,13 +16,13 @@ Deployed server link for fetches: https://auth-server-ntfy.onrender.com
 
 Endpoints
 
-`POST /sign-up` — Body: `{email, password}` `{user, accessToken, refreshToken}`
+`POST /sign-up` — Body: `{email, password}` Server returned `{user, accessToken, refreshToken}`
 
 
-`POST /sign-in` — Body: `{email, password}` `{user, accessToken, refreshToken}`
+`POST /sign-in` — Body: `{email, password}` Server returned `{user, accessToken, refreshToken}`
 
 
-`POST /refresh` — Body: `{refreshToken}` `{accessToken, refreshToken}`
+`POST /refresh` — Body: `{refreshToken}` Server returned `{accessToken, refreshToken}`
 
 
 `GET /me` — Header: `Authorization: Bearer <token>` `{id, email}`
