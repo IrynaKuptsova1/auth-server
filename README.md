@@ -18,7 +18,7 @@ https://auth-server-ntfy.onrender.com
 
 ## Endpoints
 
-### 📝 `POST /sign-up`
+### `POST /sign-up`
 
 Creates a new user account.
 
@@ -51,7 +51,7 @@ curl -X POST https://auth-server-ntfy.onrender.com/sign-up \
 
 ---
 
-### 🔑 `POST /sign-in`
+### `POST /sign-in`
 
 Authenticates an existing user.
 
@@ -84,7 +84,7 @@ curl -X POST https://auth-server-ntfy.onrender.com/sign-in \
 
 ---
 
-### ♻️ `POST /refresh`
+### `POST /refresh`
 
 Refreshes the access token using a refresh token.
 
@@ -117,7 +117,7 @@ curl -X POST https://auth-server-ntfy.onrender.com/refresh \
 
 ---
 
-### 👤 `GET /me`
+### `GET /me`
 
 Returns information about the currently authenticated user.
 
