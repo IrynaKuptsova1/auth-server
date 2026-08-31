@@ -146,4 +146,4 @@ curl https://auth-server-ntfy.onrender.com/me \
 ```
 
 ---
-You can test all endpoints immediately by copying the `curl` commands above and running them in your **command line / terminal**. You can also import or recreate the same requests in API clients such as: **Postman**, **Insomnia**, **Httpie**. No additional setup is required — just use the endpoint URLs and request data shown above.
+You can test all endpoints immediately by copying the `curl` commands above and running them in your command line (terminal). You can also import or recreate the same requests in API clients such as: Postman, Insomnia, Httpie. No additional setup is required — just use the endpoint URLs and request data shown above.
