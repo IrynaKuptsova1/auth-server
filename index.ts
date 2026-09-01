@@ -33,9 +33,9 @@ try {
 
 app.use("*", cors());
 
-// app.get("/health", (c) => {
-//   return c.json(200);
-// });
+app.get("/health", (c) => {
+  return c.json(200);
+});
 
 app.post("/sign-up", async (c) => {
   try {
@@ -151,7 +151,11 @@ app.post("/refresh", async (c) => {
     const body = await c.req.json();
     const clientRefreshToken = body.refreshToken;
 
-    if (!clientRefreshToken || typeof clientRefreshToken !== "string" || !clientRefreshToken.trim()) {
+    if (
+      !clientRefreshToken ||
+      typeof clientRefreshToken !== "string" ||
+      !clientRefreshToken.trim()
+    ) {
       return c.json({ error: "Refresh token required" }, 401);
     }
 
@@ -182,7 +186,7 @@ app.post("/refresh", async (c) => {
           token: newRefreshToken,
           created_at: new Date(),
         },
-      }
+      },
     );
 
     return c.json({
